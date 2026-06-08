@@ -28,7 +28,11 @@ function Register() {
     setLoading(true);
 
     try {
-      const response = await API.post("/auth/register", form);
+      const response = await API.post("/auth/register", {
+        name: form.name.trim(),
+        email: form.email.trim(),
+        password: form.password,
+      });
 
       saveAuth(response.data.token, response.data.user);
 
@@ -46,7 +50,6 @@ function Register() {
 
   return (
     <div className="auth-page">
-      <div className="auth-grid-overlay" />
       <div className="auth-card">
         <h1>Create Account</h1>
         <p>Register as an employee</p>
@@ -76,7 +79,7 @@ function Register() {
           <input
             type="password"
             name="password"
-            placeholder="Example: Pranav@12345"
+            placeholder="Create a strong password"
             value={form.password}
             onChange={handleChange}
             required
