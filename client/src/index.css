@@ -762,3 +762,154 @@ code {
     padding: 13px 14px;
   }
 }
+
+.training-graphics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 18px;
+  margin-bottom: 24px;
+}
+
+.training-graphic-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 22px;
+  padding: 22px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+}
+
+.training-graphic-card h3 {
+  margin: 0 0 12px;
+  font-size: 13px;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.training-graphic-card strong {
+  font-size: 36px;
+  color: #111827;
+}
+
+.training-graphic-card p {
+  margin: 8px 0 0;
+  color: #64748b;
+  font-weight: 700;
+}
+
+.success-card {
+  border-color: #bbf7d0;
+  background: #f0fdf4;
+}
+
+.warning-card {
+  border-color: #fde68a;
+  background: #fffbeb;
+}
+
+.info-card {
+  border-color: #bfdbfe;
+  background: #eff6ff;
+}
+
+.training-report-layout {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 24px;
+}
+
+.training-donut-card,
+.training-bar-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+}
+
+.training-donut-card h3,
+.training-bar-card h3 {
+  margin: 0 0 20px;
+  color: #111827;
+}
+
+.training-donut {
+  width: 210px;
+  height: 210px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  margin: 0 auto;
+}
+
+.training-donut-inner {
+  width: 135px;
+  height: 135px;
+  background: #ffffff;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  text-align: center;
+}
+
+.training-donut-inner strong {
+  font-size: 34px;
+  color: #111827;
+}
+
+.training-donut-inner span {
+  color: #64748b;
+  font-weight: 800;
+}
+
+.training-bar-row {
+  display: grid;
+  grid-template-columns: 120px 1fr 40px;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.training-bar-row span {
+  color: #334155;
+  font-weight: 800;
+}
+
+.training-bar-row strong {
+  color: #111827;
+}
+
+.training-bar-track {
+  height: 14px;
+  background: #e2e8f0;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.training-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+}
+
+.completed-fill {
+  background: #10b981;
+}
+
+.progress-fill {
+  background: #f59e0b;
+}
+
+.assigned-fill {
+  background: #3b82f6;
+}
+
+@media (max-width: 850px) {
+  .training-report-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .training-bar-row {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+}

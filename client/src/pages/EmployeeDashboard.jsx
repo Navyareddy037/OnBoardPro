@@ -782,97 +782,229 @@ function EmployeeDashboard() {
     </section>
   );
 
-  const renderTrainings = () => (
-    <section className="panel">
-      <h2>My Trainings</h2>
+  const renderTrainings = () => {
+  const myTrainings = dashboard?.trainings || [];
 
-      <div className="table-wrapper">
-        <table>
-          <thead>
-            <tr>
-              <th>Training</th>
-              <th>Category</th>
-              <th>Duration</th>
-              <th>Status</th>
-              <th>Progress</th>
-              <th>Due Date</th>
-              <th>Action</th>
-            </tr>
-          </thead>
+  const totalTrainings = myTrainings.length;
 
-          <tbody>
-            {dashboard?.trainings?.length === 0 ? (
+  const completedTrainings = myTrainings.filter(
+    (training) => training.status === "completed"
+  ).length;
+
+  const inProgressTrainings = myTrainings.filter(
+    (training) => training.status === "in_progress"
+  ).length;
+
+  const assignedTrainings = myTrainings.filter(
+    (training) => training.status === "assigned"
+  ).length;
+
+  const averageProgress =
+    totalTrainings === 0
+      ? 0
+      : Math.round(
+          myTrainings.reduce(
+            (sum, training) => sum + Number(training.progress_percent || 0),
+            0
+          ) / totalTrainings
+        );
+
+  return (
+    <>
+      <section className="panel">
+        <h2>Training Report Graphics</h2>
+
+        <div className="training-graphics-grid">
+          <div className="training-graphic-card">
+            <h3>Total Trainings</h3>
+            <strong>{totalTrainings}</strong>
+            <p>Assigned to you</p>
+          </div>
+
+          <div className="training-graphic-card success-card">
+            <h3>Completed</h3>
+            <strong>{completedTrainings}</strong>
+            <p>Finished trainings</p>
+          </div>
+
+          <div className="training-graphic-card warning-card">
+            <h3>In Progress</h3>
+            <strong>{inProgressTrainings}</strong>
+            <p>Currently learning</p>
+          </div>
+
+          <div className="training-graphic-card info-card">
+            <h3>Assigned</h3>
+            <strong>{assignedTrainings}</strong>
+            <p>Not started yet</p>
+          </div>
+        </div>
+
+        <div className="training-report-layout">
+          <div className="training-donut-card">
+            <h3>Average Training Progress</h3>
+
+            <div
+              className="training-donut"
+              style={{
+                background: `conic-gradient(#5b5df7 ${
+                  averageProgress * 3.6
+                }deg, #e2e8f0 0deg)`,
+              }}
+            >
+              <div className="training-donut-inner">
+                <strong>{averageProgress}%</strong>
+                <span>Progress</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="training-bar-card">
+            <h3>Status Distribution</h3>
+
+            <div className="training-bar-row">
+              <span>Completed</span>
+              <div className="training-bar-track">
+                <div
+                  className="training-bar-fill completed-fill"
+                  style={{
+                    width:
+                      totalTrainings === 0
+                        ? "0%"
+                        : `${(completedTrainings / totalTrainings) * 100}%`,
+                  }}
+                ></div>
+              </div>
+              <strong>{completedTrainings}</strong>
+            </div>
+
+            <div className="training-bar-row">
+              <span>In Progress</span>
+              <div className="training-bar-track">
+                <div
+                  className="training-bar-fill progress-fill"
+                  style={{
+                    width:
+                      totalTrainings === 0
+                        ? "0%"
+                        : `${(inProgressTrainings / totalTrainings) * 100}%`,
+                  }}
+                ></div>
+              </div>
+              <strong>{inProgressTrainings}</strong>
+            </div>
+
+            <div className="training-bar-row">
+              <span>Assigned</span>
+              <div className="training-bar-track">
+                <div
+                  className="training-bar-fill assigned-fill"
+                  style={{
+                    width:
+                      totalTrainings === 0
+                        ? "0%"
+                        : `${(assignedTrainings / totalTrainings) * 100}%`,
+                  }}
+                ></div>
+              </div>
+              <strong>{assignedTrainings}</strong>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="panel">
+        <h2>My Trainings</h2>
+
+        <div className="table-wrapper">
+          <table>
+            <thead>
               <tr>
-                <td colSpan="7">No trainings assigned yet.</td>
+                <th>Training</th>
+                <th>Category</th>
+                <th>Duration</th>
+                <th>Status</th>
+                <th>Progress</th>
+                <th>Due Date</th>
+                <th>Action</th>
               </tr>
-            ) : (
-              dashboard?.trainings?.map((training) => (
-                <tr key={training.assignment_id}>
-                  <td>{training.title}</td>
-                  <td>{training.category || "General"}</td>
-                  <td>{training.duration_hours} hrs</td>
-                  <td>
-                    <span className={getStatusClass(training.status)}>
-                      {training.status}
-                    </span>
-                  </td>
-                  <td>
-                    <div className="progress-container">
-                      <div className="progress-bar-track">
-                        <div
-                          className="progress-bar"
-                          style={{
-                            width: `${training.progress_percent}%`,
-                          }}
-                        ></div>
-                      </div>
-                      <span className="progress-text">
-                        {training.progress_percent}%
-                      </span>
-                    </div>
-                  </td>
-                  <td>{formatDate(training.due_date)}</td>
-                  <td>
-                    {training.status === "assigned" && (
-                      <button
-                        className="small-btn"
-                        onClick={() =>
-                          updateTrainingProgress(
-                            training.assignment_id,
-                            "in_progress",
-                            50
-                          )
-                        }
-                      >
-                        Start
-                      </button>
-                    )}
+            </thead>
 
-                    {training.status !== "completed" && (
-                      <button
-                        className="small-btn"
-                        onClick={() =>
-                          updateTrainingProgress(
-                            training.assignment_id,
-                            "completed",
-                            100
-                          )
-                        }
-                      >
-                        Complete
-                      </button>
-                    )}
-
-                    {training.status === "completed" && "Done"}
-                  </td>
+            <tbody>
+              {myTrainings.length === 0 ? (
+                <tr>
+                  <td colSpan="7">No trainings assigned yet.</td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
-    </section>
+              ) : (
+                myTrainings.map((training) => (
+                  <tr key={training.assignment_id}>
+                    <td>{training.title}</td>
+                    <td>{training.category || "General"}</td>
+                    <td>{training.duration_hours} hrs</td>
+                    <td>
+                      <span className={getStatusClass(training.status)}>
+                        {training.status}
+                      </span>
+                    </td>
+                    <td>
+                      <div className="progress-container">
+                        <div className="progress-bar-track">
+                          <div
+                            className="progress-bar"
+                            style={{
+                              width: `${training.progress_percent}%`,
+                            }}
+                          ></div>
+                        </div>
+                        <span className="progress-text">
+                          {training.progress_percent}%
+                        </span>
+                      </div>
+                    </td>
+                    <td>{formatDate(training.due_date)}</td>
+                    <td>
+                      {training.status === "assigned" && (
+                        <button
+                          className="small-btn"
+                          onClick={() =>
+                            updateTrainingProgress(
+                              training.assignment_id,
+                              "in_progress",
+                              50
+                            )
+                          }
+                        >
+                          Start
+                        </button>
+                      )}
+
+                      {training.status !== "completed" && (
+                        <button
+                          className="small-btn"
+                          onClick={() =>
+                            updateTrainingProgress(
+                              training.assignment_id,
+                              "completed",
+                              100
+                            )
+                          }
+                        >
+                          Complete
+                        </button>
+                      )}
+
+                      {training.status === "completed" && "Done"}
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </>
   );
+};
 
   const renderProgress = () => (
     <section className="panel">
