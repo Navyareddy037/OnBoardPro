@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">OnboardPro</string>
+    <string name="title_activity_main">OnboardPro</string>
+    <string name="package_name">com.navya.onboardpro</string>
+    <string name="custom_url_scheme">com.navya.onboardpro</string>
+</resources>

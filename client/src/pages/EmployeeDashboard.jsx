@@ -1,1211 +1,316 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import API from "../services/api";
-import { getUser, logout } from "../utils/auth";
 
 function EmployeeDashboard() {
   const navigate = useNavigate();
-  const user = getUser();
+  const [user, setUser] = useState(null);
+  const [activeTab, setActiveTab] = useState("Home");
 
-  const [activeSection, setActiveSection] = useState("dashboard");
+  useEffect(() => {
+    const savedUser = localStorage.getItem("onboardpro_user");
+    if (savedUser) {
+      setUser(JSON.parse(savedUser));
+    }
+  }, []);
 
-  const [dashboard, setDashboard] = useState(null);
-  const [documents, setDocuments] = useState([]);
-  const [offers, setOffers] = useState([]);
-  const [notifications, setNotifications] = useState([]);
-  const [unreadCount, setUnreadCount] = useState(0);
-
-  const [message, setMessage] = useState("");
-  const [loading, setLoading] = useState(true);
-
-  const [profileForm, setProfileForm] = useState({
-    name: "",
-    phone: "",
-  });
-
-  const [passwordForm, setPasswordForm] = useState({
-    current_password: "",
-    new_password: "",
-  });
-
-  const [documentForm, setDocumentForm] = useState({
-    document_type: "",
-    file: null,
-  });
-
-  const [offerRemarks, setOfferRemarks] = useState({});
-
-  const userToken = localStorage.getItem("onboardpro_token");
-
-  const sidebarItems = [
-    { key: "dashboard", label: "Dashboard" },
-    { key: "profile", label: "Profile Management" },
-    { key: "documents", label: "Documents" },
-    { key: "offers", label: "Offer Letters" },
-    { key: "tasks", label: "Tasks" },
-    { key: "trainings", label: "Trainings" },
-    { key: "progress", label: "Progress" },
-    { key: "notifications", label: "Notifications" },
-    { key: "reports", label: "Reports" },
-  ];
-
-  const sidebarStyle = {
-    display: "grid",
-    gridTemplateColumns: "270px 1fr",
-    minHeight: "calc(100vh - 72px)",
-  };
-
-  const sideMenuStyle = {
-    background: "#ffffff",
-    borderRight: "1px solid #e2e8f0",
-    padding: "22px",
-    position: "sticky",
-    top: "72px",
-    height: "calc(100vh - 72px)",
-    overflowY: "auto",
-  };
-
-  const sideButtonStyle = (isActive) => ({
-    width: "100%",
-    textAlign: "left",
-    padding: "13px 14px",
-    marginBottom: "10px",
-    borderRadius: "14px",
-    border: isActive ? "1px solid #6366f1" : "1px solid #e2e8f0",
-    background: isActive ? "#eef2ff" : "#ffffff",
-    color: isActive ? "#4f46e5" : "#475569",
-    fontWeight: "800",
-    cursor: "pointer",
-  });
-
-  const sectionStyle = {
-    padding: "32px",
-    overflowX: "hidden",
-  };
-
-  const textareaStyle = {
-    width: "100%",
-    minHeight: "90px",
-    border: "1.5px solid #e2e8f0",
-    borderRadius: "14px",
-    padding: "12px 16px",
-    resize: "vertical",
-    fontFamily: "inherit",
-    fontSize: "15px",
-    background: "#f8fafc",
-  };
-
-  const handleLogout = () => {
-    logout();
+  const logoutUser = () => {
+    localStorage.removeItem("onboardpro_token");
+    localStorage.removeItem("onboardpro_user");
     navigate("/login");
   };
 
-  const formatDate = (dateValue) => {
-    if (!dateValue) {
-      return "Not set";
-    }
+  const renderHome = () => {
+    return (
+      <>
+        <section className="clean-welcome employee">
+          <div>
+            <span>EMPLOYEE PORTAL</span>
+            <h1>Hello, {user?.name || "Employee"}</h1>
+            <p>Complete your onboarding steps and track your status easily.</p>
+          </div>
+        </section>
 
-    return new Date(dateValue).toLocaleDateString("en-IN");
+        <section className="clean-stats">
+          <div className="clean-stat primary">
+            <p>My Progress</p>
+            <h2>0%</h2>
+          </div>
+
+          <div className="clean-stat">
+            <p>Documents</p>
+            <h2>0/0</h2>
+          </div>
+
+          <div className="clean-stat">
+            <p>Tasks</p>
+            <h2>0/0</h2>
+          </div>
+
+          <div className="clean-stat">
+            <p>Training</p>
+            <h2>0%</h2>
+          </div>
+        </section>
+
+        <section className="clean-section">
+          <div className="clean-section-title">
+            <h2>My Actions</h2>
+            <p>Complete these onboarding steps</p>
+          </div>
+
+          <div className="clean-modules">
+            <button onClick={() => setActiveTab("Profile")}>
+              <div className="clean-icon">👤</div>
+              <div>
+                <h3>Profile</h3>
+                <p>View your employee details</p>
+              </div>
+              <span>›</span>
+            </button>
+
+            <button onClick={() => setActiveTab("Documents")}>
+              <div className="clean-icon">📄</div>
+              <div>
+                <h3>Documents</h3>
+                <p>Upload required documents</p>
+              </div>
+              <span>›</span>
+            </button>
+
+            <button onClick={() => setActiveTab("Training")}>
+              <div className="clean-icon">🎓</div>
+              <div>
+                <h3>Training</h3>
+                <p>Complete assigned modules</p>
+              </div>
+              <span>›</span>
+            </button>
+
+            <button onClick={() => setActiveTab("Tasks")}>
+              <div className="clean-icon">✅</div>
+              <div>
+                <h3>Tasks</h3>
+                <p>Check your task list</p>
+              </div>
+              <span>›</span>
+            </button>
+          </div>
+        </section>
+
+        <section className="clean-progress-card">
+          <div>
+            <h2>My Onboarding</h2>
+            <p>Complete all steps to finish onboarding</p>
+          </div>
+
+          <strong>0%</strong>
+
+          <div className="clean-progress-bar">
+            <div style={{ width: "0%" }}></div>
+          </div>
+        </section>
+      </>
+    );
   };
 
-  const getStatusClass = (status) => {
-    if (status === "completed" || status === "approved" || status === "accepted") {
-      return "status-badge status-success";
-    }
+  const renderProfile = () => {
+    return (
+      <section className="clean-panel">
+        <div className="clean-profile-box">
+          <div className="clean-avatar">
+            {user?.name ? user.name.charAt(0).toUpperCase() : "E"}
+          </div>
 
-    if (status === "in_progress" || status === "issued" || status === "assigned") {
-      return "status-badge status-warning";
-    }
-
-    if (status === "rejected" || status === "revoked") {
-      return "status-badge status-danger";
-    }
-
-    return "status-badge status-pending";
-  };
-
-  const loadEmployeeData = async () => {
-    try {
-      setLoading(true);
-
-      const [dashboardResponse, documentsResponse, offersResponse, notificationsResponse] =
-        await Promise.all([
-          API.get("/reports/my-dashboard"),
-          API.get("/documents/my-documents"),
-          API.get("/offers/my-offers"),
-          API.get("/notifications/my-notifications"),
-        ]);
-
-      setDashboard(dashboardResponse.data.dashboard);
-      setDocuments(documentsResponse.data.documents || []);
-      setOffers(offersResponse.data.offer_letters || []);
-      setNotifications(notificationsResponse.data.notifications || []);
-      setUnreadCount(notificationsResponse.data.unread_count || 0);
-
-      setProfileForm({
-        name: dashboardResponse.data.dashboard?.profile?.name || "",
-        phone: dashboardResponse.data.dashboard?.profile?.phone || "",
-      });
-    } catch (error) {
-      setMessage(
-        error.response?.data?.message ||
-          "Failed to load employee dashboard. Check backend server."
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleProfileChange = (event) => {
-    setProfileForm({
-      ...profileForm,
-      [event.target.name]: event.target.value,
-    });
-  };
-
-  const handlePasswordChange = (event) => {
-    setPasswordForm({
-      ...passwordForm,
-      [event.target.name]: event.target.value,
-    });
-  };
-
-  const handleDocumentChange = (event) => {
-    const { name, value, files } = event.target;
-
-    setDocumentForm({
-      ...documentForm,
-      [name]: files ? files[0] : value,
-    });
-  };
-
-  const updateProfile = async (event) => {
-    event.preventDefault();
-    setMessage("");
-
-    try {
-      await API.put("/employee/profile", profileForm);
-
-      setMessage("Profile updated successfully.");
-      loadEmployeeData();
-    } catch (error) {
-      setMessage(
-        error.response?.data?.message ||
-          error.response?.data?.errors?.[0]?.msg ||
-          "Failed to update profile."
-      );
-    }
-  };
-
-  const changePassword = async (event) => {
-    event.preventDefault();
-    setMessage("");
-
-    try {
-      await API.patch("/employee/change-password", passwordForm);
-
-      setMessage("Password changed successfully.");
-
-      setPasswordForm({
-        current_password: "",
-        new_password: "",
-      });
-    } catch (error) {
-      setMessage(
-        error.response?.data?.message ||
-          error.response?.data?.errors?.[0]?.msg ||
-          "Failed to change password."
-      );
-    }
-  };
-
-  const uploadDocument = async (event) => {
-    event.preventDefault();
-    setMessage("");
-
-    if (!documentForm.file) {
-      setMessage("Please choose a document file.");
-      return;
-    }
-
-    try {
-      const formData = new FormData();
-
-      formData.append("document_type", documentForm.document_type);
-      formData.append("document", documentForm.file);
-
-      await API.post("/documents/upload", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-
-      setMessage("Document uploaded successfully. Waiting for HR verification.");
-
-      setDocumentForm({
-        document_type: "",
-        file: null,
-      });
-
-      event.target.reset();
-
-      loadEmployeeData();
-    } catch (error) {
-      setMessage(
-        error.response?.data?.message ||
-          error.response?.data?.errors?.[0]?.msg ||
-          "Failed to upload document."
-      );
-    }
-  };
-
-  const updateTaskStatus = async (taskId, status) => {
-    setMessage("");
-
-    try {
-      await API.patch(`/tasks/${taskId}/status`, { status });
-
-      setMessage("Task status updated successfully.");
-      loadEmployeeData();
-    } catch (error) {
-      setMessage(
-        error.response?.data?.message ||
-          error.response?.data?.errors?.[0]?.msg ||
-          "Failed to update task."
-      );
-    }
-  };
-
-  const updateTrainingProgress = async (assignmentId, status, progressPercent) => {
-    setMessage("");
-
-    try {
-      await API.patch(`/trainings/assignments/${assignmentId}/progress`, {
-        status,
-        progress_percent: progressPercent,
-      });
-
-      setMessage("Training progress updated successfully.");
-      loadEmployeeData();
-    } catch (error) {
-      setMessage(
-        error.response?.data?.message ||
-          error.response?.data?.errors?.[0]?.msg ||
-          "Failed to update training progress."
-      );
-    }
-  };
-
-  const respondOffer = async (offerId, status) => {
-    setMessage("");
-
-    try {
-      await API.patch(`/offers/${offerId}/respond`, {
-        status,
-        remarks: offerRemarks[offerId] || "",
-      });
-
-      setMessage(
-        status === "accepted"
-          ? "Offer letter accepted successfully."
-          : "Offer letter rejected successfully."
-      );
-
-      setOfferRemarks({
-        ...offerRemarks,
-        [offerId]: "",
-      });
-
-      loadEmployeeData();
-    } catch (error) {
-      setMessage(
-        error.response?.data?.message ||
-          error.response?.data?.errors?.[0]?.msg ||
-          "Failed to respond to offer letter."
-      );
-    }
-  };
-
-  const markNotificationRead = async (notificationId) => {
-    setMessage("");
-
-    try {
-      await API.patch(`/notifications/${notificationId}/read`);
-
-      setMessage("Notification marked as read.");
-      loadEmployeeData();
-    } catch (error) {
-      setMessage(error.response?.data?.message || "Failed to update notification.");
-    }
-  };
-
-  const markAllNotificationsRead = async () => {
-    setMessage("");
-
-    try {
-      await API.patch("/notifications/read-all");
-
-      setMessage("All notifications marked as read.");
-      loadEmployeeData();
-    } catch (error) {
-      setMessage(error.response?.data?.message || "Failed to update notifications.");
-    }
-  };
-
-  const downloadFile = async (endpoint, filename) => {
-    setMessage("");
-
-    try {
-      const response = await API.get(endpoint, {
-        responseType: "blob",
-        headers: {
-          Authorization: `Bearer ${userToken}`,
-        },
-      });
-
-      const fileUrl = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement("a");
-
-      link.href = fileUrl;
-      link.setAttribute("download", filename || "download");
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-
-      window.URL.revokeObjectURL(fileUrl);
-    } catch (error) {
-      setMessage("Failed to download file.");
-    }
-  };
-
-  useEffect(() => {
-    loadEmployeeData();
-  }, []);
-
-  if (loading) {
-    return <div className="loading-screen">Loading Employee Dashboard...</div>;
-  }
-
-  const renderDashboard = () => (
-    <>
-      <section className="hero-card">
-        <h1>Welcome, {dashboard?.profile?.name}</h1>
-        <p>
-          Track your onboarding progress, documents, tasks, trainings, offer
-          letters, and notifications.
-        </p>
-      </section>
-
-      <section className="stats-grid">
-        <div className="stat-card">
-          <h3>Overall Progress</h3>
-          <strong>{dashboard?.summary?.overall_progress_percent || 0}%</strong>
+          <h2>{user?.name || "Employee"}</h2>
+          <p>{user?.email || "employee@example.com"}</p>
         </div>
 
-        <div className="stat-card">
-          <h3>Documents Approved</h3>
-          <strong>
-            {dashboard?.summary?.approved_documents || 0}/
-            {dashboard?.summary?.total_documents || 0}
-          </strong>
-        </div>
+        <div className="clean-list">
+          <div>
+            <span>Role</span>
+            <strong>{user?.role || "Employee"}</strong>
+          </div>
 
-        <div className="stat-card">
-          <h3>Tasks Completed</h3>
-          <strong>
-            {dashboard?.summary?.completed_tasks || 0}/
-            {dashboard?.summary?.total_tasks || 0}
-          </strong>
-        </div>
+          <div>
+            <span>Status</span>
+            <strong>Active</strong>
+          </div>
 
-        <div className="stat-card">
-          <h3>Training Progress</h3>
-          <strong>{dashboard?.summary?.training_progress_percent || 0}%</strong>
-        </div>
-
-        <div className="stat-card">
-          <h3>Offer Letters</h3>
-          <strong>{offers.length}</strong>
-        </div>
-
-        <div className="stat-card">
-          <h3>Unread Notifications</h3>
-          <strong>{unreadCount}</strong>
+          <div>
+            <span>Profile</span>
+            <strong>Pending</strong>
+          </div>
         </div>
       </section>
-    </>
-  );
+    );
+  };
 
-  const renderProfile = () => (
-    <>
-      <section className="panel">
-        <h2>My Profile</h2>
-
-        <div className="profile-grid">
-          <p>
-            <strong>Employee Code</strong>
-            {dashboard?.profile?.employee_code || "Not assigned"}
-          </p>
-
-          <p>
-            <strong>Email</strong>
-            {dashboard?.profile?.email}
-          </p>
-
-          <p>
-            <strong>Role</strong>
-            {dashboard?.profile?.role}
-          </p>
-
-          <p>
-            <strong>Department</strong>
-            {dashboard?.profile?.department || "Not assigned"}
-          </p>
-
-          <p>
-            <strong>Designation</strong>
-            {dashboard?.profile?.designation || "Not assigned"}
-          </p>
-
-          <p>
-            <strong>Joining Date</strong>
-            {formatDate(dashboard?.profile?.joining_date)}
-          </p>
-
-          <p>
-            <strong>Onboarding Status</strong>
-            {dashboard?.profile?.onboarding_status}
-          </p>
-
-          <p>
-            <strong>Account Status</strong>
-            {dashboard?.profile?.is_active ? "Active" : "Inactive"}
-          </p>
+  const renderDocuments = () => {
+    return (
+      <section className="clean-panel">
+        <div className="clean-section-title">
+          <h2>Documents</h2>
+          <p>Upload your required documents</p>
         </div>
-      </section>
 
-      <section className="panel">
-        <h2>Update Profile</h2>
-
-        <form className="grid-form" onSubmit={updateProfile}>
-          <input
-            type="text"
-            name="name"
-            placeholder="Name"
-            value={profileForm.name}
-            onChange={handleProfileChange}
-            required
-          />
-
-          <input
-            type="text"
-            name="phone"
-            placeholder="Phone"
-            value={profileForm.phone}
-            onChange={handleProfileChange}
-          />
-
-          <button type="submit">Update Profile</button>
-        </form>
-      </section>
-
-      <section className="panel">
-        <h2>Change Password</h2>
-
-        <form className="grid-form" onSubmit={changePassword}>
-          <input
-            type="password"
-            name="current_password"
-            placeholder="Current password"
-            value={passwordForm.current_password}
-            onChange={handlePasswordChange}
-            required
-          />
-
-          <input
-            type="password"
-            name="new_password"
-            placeholder="New password"
-            value={passwordForm.new_password}
-            onChange={handlePasswordChange}
-            required
-          />
-
-          <button type="submit">Change Password</button>
-        </form>
-      </section>
-    </>
-  );
-
-  const renderDocuments = () => (
-    <>
-      <section className="panel">
-        <h2>Upload Document</h2>
-
-        <form className="grid-form" onSubmit={uploadDocument}>
-          <select
-            name="document_type"
-            value={documentForm.document_type}
-            onChange={handleDocumentChange}
-            required
-          >
-            <option value="">Select Document Type</option>
-            <option value="Aadhaar Card">Aadhaar Card</option>
-            <option value="PAN Card">PAN Card</option>
-            <option value="Education Certificate">Education Certificate</option>
-            <option value="Experience Letter">Experience Letter</option>
-            <option value="Address Proof">Address Proof</option>
-            <option value="Bank Details">Bank Details</option>
-            <option value="Other">Other</option>
+        <div className="clean-form">
+          <label>Document Type</label>
+          <select>
+            <option>ID Proof</option>
+            <option>Resume</option>
+            <option>Certificates</option>
+            <option>Bank Details</option>
           </select>
 
-          <input
-            type="file"
-            name="file"
-            accept="application/pdf,image/jpeg,image/png"
-            onChange={handleDocumentChange}
-            required
-          />
+          <label>Upload File</label>
+          <input type="file" />
 
-          <button type="submit">Upload Document</button>
-        </form>
-      </section>
-
-      <section className="panel">
-        <h2>My Documents</h2>
-
-        <div className="table-wrapper">
-          <table>
-            <thead>
-              <tr>
-                <th>Document</th>
-                <th>File</th>
-                <th>Status</th>
-                <th>Remarks</th>
-                <th>Uploaded</th>
-                <th>Download</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {documents.length === 0 ? (
-                <tr>
-                  <td colSpan="6">No documents uploaded yet.</td>
-                </tr>
-              ) : (
-                documents.map((document) => (
-                  <tr key={document.id}>
-                    <td>{document.document_type}</td>
-                    <td>{document.original_name}</td>
-                    <td>
-                      <span className={getStatusClass(document.status)}>
-                        {document.status}
-                      </span>
-                    </td>
-                    <td>{document.remarks || "No remarks"}</td>
-                    <td>{formatDate(document.uploaded_at)}</td>
-                    <td>
-                      <button
-                        className="small-btn"
-                        onClick={() =>
-                          downloadFile(
-                            `/documents/download/${document.id}`,
-                            document.original_name
-                          )
-                        }
-                      >
-                        Download
-                      </button>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+          <button>Upload Document</button>
         </div>
       </section>
-    </>
-  );
+    );
+  };
 
-  const renderOffers = () => (
-    <section className="panel">
-      <h2>My Offer Letters</h2>
-
-      <div className="table-wrapper">
-        <table>
-          <thead>
-            <tr>
-              <th>Title</th>
-              <th>File</th>
-              <th>Status</th>
-              <th>Remarks</th>
-              <th>Issued</th>
-              <th>Download</th>
-              <th>Response</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {offers.length === 0 ? (
-              <tr>
-                <td colSpan="7">No offer letters issued yet.</td>
-              </tr>
-            ) : (
-              offers.map((offer) => (
-                <tr key={offer.id}>
-                  <td>{offer.title}</td>
-                  <td>{offer.original_name}</td>
-                  <td>
-                    <span className={getStatusClass(offer.status)}>
-                      {offer.status}
-                    </span>
-                  </td>
-                  <td>{offer.remarks || "No remarks"}</td>
-                  <td>{formatDate(offer.issued_at)}</td>
-                  <td>
-                    <button
-                      className="small-btn"
-                      onClick={() =>
-                        downloadFile(`/offers/download/${offer.id}`, offer.original_name)
-                      }
-                    >
-                      Download
-                    </button>
-                  </td>
-                  <td>
-                    {offer.status === "issued" ? (
-                      <>
-                        <input
-                          type="text"
-                          placeholder="Remarks"
-                          value={offerRemarks[offer.id] || ""}
-                          onChange={(event) =>
-                            setOfferRemarks({
-                              ...offerRemarks,
-                              [offer.id]: event.target.value,
-                            })
-                          }
-                        />
-
-                        <button
-                          className="small-btn"
-                          onClick={() => respondOffer(offer.id, "accepted")}
-                        >
-                          Accept
-                        </button>{" "}
-
-                        <button
-                          className="small-btn"
-                          onClick={() => respondOffer(offer.id, "rejected")}
-                        >
-                          Reject
-                        </button>
-                      </>
-                    ) : (
-                      "Responded"
-                    )}
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
-    </section>
-  );
-
-  const renderTasks = () => (
-    <section className="panel">
-      <h2>My Tasks</h2>
-
-      <div className="table-wrapper">
-        <table>
-          <thead>
-            <tr>
-              <th>Task</th>
-              <th>Description</th>
-              <th>Priority</th>
-              <th>Status</th>
-              <th>Due Date</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {dashboard?.tasks?.length === 0 ? (
-              <tr>
-                <td colSpan="6">No tasks assigned yet.</td>
-              </tr>
-            ) : (
-              dashboard?.tasks?.map((task) => (
-                <tr key={task.id}>
-                  <td>{task.title}</td>
-                  <td>{task.description || "No description"}</td>
-                  <td>
-                    <span className={`priority-badge priority-${task.priority}`}>
-                      {task.priority}
-                    </span>
-                  </td>
-                  <td>
-                    <span className={getStatusClass(task.status)}>
-                      {task.status}
-                    </span>
-                  </td>
-                  <td>{formatDate(task.due_date)}</td>
-                  <td>
-                    {task.status === "pending" && (
-                      <button
-                        className="small-btn"
-                        onClick={() => updateTaskStatus(task.id, "in_progress")}
-                      >
-                        Start
-                      </button>
-                    )}
-
-                    {task.status !== "completed" && (
-                      <button
-                        className="small-btn"
-                        onClick={() => updateTaskStatus(task.id, "completed")}
-                      >
-                        Complete
-                      </button>
-                    )}
-
-                    {task.status === "completed" && "Done"}
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
-    </section>
-  );
-
-  const renderTrainings = () => {
-  const myTrainings = dashboard?.trainings || [];
-
-  const totalTrainings = myTrainings.length;
-
-  const completedTrainings = myTrainings.filter(
-    (training) => training.status === "completed"
-  ).length;
-
-  const inProgressTrainings = myTrainings.filter(
-    (training) => training.status === "in_progress"
-  ).length;
-
-  const assignedTrainings = myTrainings.filter(
-    (training) => training.status === "assigned"
-  ).length;
-
-  const averageProgress =
-    totalTrainings === 0
-      ? 0
-      : Math.round(
-          myTrainings.reduce(
-            (sum, training) => sum + Number(training.progress_percent || 0),
-            0
-          ) / totalTrainings
-        );
-
-  return (
-    <>
-      <section className="panel">
-        <h2>Training Report Graphics</h2>
-
-        <div className="training-graphics-grid">
-          <div className="training-graphic-card">
-            <h3>Total Trainings</h3>
-            <strong>{totalTrainings}</strong>
-            <p>Assigned to you</p>
-          </div>
-
-          <div className="training-graphic-card success-card">
-            <h3>Completed</h3>
-            <strong>{completedTrainings}</strong>
-            <p>Finished trainings</p>
-          </div>
-
-          <div className="training-graphic-card warning-card">
-            <h3>In Progress</h3>
-            <strong>{inProgressTrainings}</strong>
-            <p>Currently learning</p>
-          </div>
-
-          <div className="training-graphic-card info-card">
-            <h3>Assigned</h3>
-            <strong>{assignedTrainings}</strong>
-            <p>Not started yet</p>
-          </div>
+  const renderTraining = () => {
+    return (
+      <section className="clean-panel">
+        <div className="clean-section-title">
+          <h2>Training</h2>
+          <p>Complete assigned training modules</p>
         </div>
 
-        <div className="training-report-layout">
-          <div className="training-donut-card">
-            <h3>Average Training Progress</h3>
-
-            <div
-              className="training-donut"
-              style={{
-                background: `conic-gradient(#5b5df7 ${
-                  averageProgress * 3.6
-                }deg, #e2e8f0 0deg)`,
-              }}
-            >
-              <div className="training-donut-inner">
-                <strong>{averageProgress}%</strong>
-                <span>Progress</span>
-              </div>
-            </div>
+        <div className="clean-list">
+          <div>
+            <span>🎓 HR Orientation</span>
+            <strong>Assigned</strong>
           </div>
 
-          <div className="training-bar-card">
-            <h3>Status Distribution</h3>
+          <div>
+            <span>🔐 Security Awareness</span>
+            <strong>Pending</strong>
+          </div>
 
-            <div className="training-bar-row">
-              <span>Completed</span>
-              <div className="training-bar-track">
-                <div
-                  className="training-bar-fill completed-fill"
-                  style={{
-                    width:
-                      totalTrainings === 0
-                        ? "0%"
-                        : `${(completedTrainings / totalTrainings) * 100}%`,
-                  }}
-                ></div>
-              </div>
-              <strong>{completedTrainings}</strong>
-            </div>
-
-            <div className="training-bar-row">
-              <span>In Progress</span>
-              <div className="training-bar-track">
-                <div
-                  className="training-bar-fill progress-fill"
-                  style={{
-                    width:
-                      totalTrainings === 0
-                        ? "0%"
-                        : `${(inProgressTrainings / totalTrainings) * 100}%`,
-                  }}
-                ></div>
-              </div>
-              <strong>{inProgressTrainings}</strong>
-            </div>
-
-            <div className="training-bar-row">
-              <span>Assigned</span>
-              <div className="training-bar-track">
-                <div
-                  className="training-bar-fill assigned-fill"
-                  style={{
-                    width:
-                      totalTrainings === 0
-                        ? "0%"
-                        : `${(assignedTrainings / totalTrainings) * 100}%`,
-                  }}
-                ></div>
-              </div>
-              <strong>{assignedTrainings}</strong>
-            </div>
+          <div>
+            <span>🏢 Company Policies</span>
+            <strong>Pending</strong>
           </div>
         </div>
       </section>
+    );
+  };
 
-      <section className="panel">
-        <h2>My Trainings</h2>
+  const renderTasks = () => {
+    return (
+      <section className="clean-panel">
+        <div className="clean-section-title">
+          <h2>Tasks</h2>
+          <p>Your onboarding task list</p>
+        </div>
 
-        <div className="table-wrapper">
-          <table>
-            <thead>
-              <tr>
-                <th>Training</th>
-                <th>Category</th>
-                <th>Duration</th>
-                <th>Status</th>
-                <th>Progress</th>
-                <th>Due Date</th>
-                <th>Action</th>
-              </tr>
-            </thead>
+        <div className="clean-list">
+          <div>
+            <span>Complete Profile</span>
+            <strong>Pending</strong>
+          </div>
 
-            <tbody>
-              {myTrainings.length === 0 ? (
-                <tr>
-                  <td colSpan="7">No trainings assigned yet.</td>
-                </tr>
-              ) : (
-                myTrainings.map((training) => (
-                  <tr key={training.assignment_id}>
-                    <td>{training.title}</td>
-                    <td>{training.category || "General"}</td>
-                    <td>{training.duration_hours} hrs</td>
-                    <td>
-                      <span className={getStatusClass(training.status)}>
-                        {training.status}
-                      </span>
-                    </td>
-                    <td>
-                      <div className="progress-container">
-                        <div className="progress-bar-track">
-                          <div
-                            className="progress-bar"
-                            style={{
-                              width: `${training.progress_percent}%`,
-                            }}
-                          ></div>
-                        </div>
-                        <span className="progress-text">
-                          {training.progress_percent}%
-                        </span>
-                      </div>
-                    </td>
-                    <td>{formatDate(training.due_date)}</td>
-                    <td>
-                      {training.status === "assigned" && (
-                        <button
-                          className="small-btn"
-                          onClick={() =>
-                            updateTrainingProgress(
-                              training.assignment_id,
-                              "in_progress",
-                              50
-                            )
-                          }
-                        >
-                          Start
-                        </button>
-                      )}
+          <div>
+            <span>Upload Documents</span>
+            <strong>Pending</strong>
+          </div>
 
-                      {training.status !== "completed" && (
-                        <button
-                          className="small-btn"
-                          onClick={() =>
-                            updateTrainingProgress(
-                              training.assignment_id,
-                              "completed",
-                              100
-                            )
-                          }
-                        >
-                          Complete
-                        </button>
-                      )}
-
-                      {training.status === "completed" && "Done"}
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+          <div>
+            <span>Complete Orientation</span>
+            <strong>Pending</strong>
+          </div>
         </div>
       </section>
-    </>
-  );
-};
+    );
+  };
 
-  const renderProgress = () => (
-    <section className="panel">
-      <h2>My Progress</h2>
-
-      <div className="stats-grid">
-        <div className="stat-card">
-          <h3>Document Progress</h3>
-          <strong>{dashboard?.summary?.document_progress_percent || 0}%</strong>
+  const renderAlerts = () => {
+    return (
+      <section className="clean-panel">
+        <div className="clean-section-title">
+          <h2>Notifications</h2>
+          <p>Latest onboarding updates</p>
         </div>
 
-        <div className="stat-card">
-          <h3>Task Progress</h3>
-          <strong>{dashboard?.summary?.task_progress_percent || 0}%</strong>
-        </div>
-
-        <div className="stat-card">
-          <h3>Training Progress</h3>
-          <strong>{dashboard?.summary?.training_progress_percent || 0}%</strong>
-        </div>
-
-        <div className="stat-card">
-          <h3>Overall Progress</h3>
-          <strong>{dashboard?.summary?.overall_progress_percent || 0}%</strong>
-        </div>
-      </div>
-
-      <div style={{ marginTop: "24px" }} className="panel">
-        <h2>Overall Progress Bar</h2>
-
-        <div className="progress-container">
-          <div className="progress-bar-track">
-            <div
-              className="progress-bar"
-              style={{
-                width: `${dashboard?.summary?.overall_progress_percent || 0}%`,
-              }}
-            ></div>
+        <div className="clean-list">
+          <div>
+            <span>Welcome to OnboardPro</span>
+            <strong>New</strong>
           </div>
-          <span className="progress-text">
-            {dashboard?.summary?.overall_progress_percent || 0}%
-          </span>
+
+          <div>
+            <span>Please upload your documents</span>
+            <strong>Pending</strong>
+          </div>
         </div>
-      </div>
-    </section>
-  );
+      </section>
+    );
+  };
 
-  const renderNotifications = () => (
-    <section className="panel">
-      <h2>My Notifications</h2>
-
-      {unreadCount > 0 && (
-        <button className="small-btn" onClick={markAllNotificationsRead}>
-          Mark All as Read
-        </button>
-      )}
-
-      <div style={{ marginTop: "18px" }} className="table-wrapper">
-        <table>
-          <thead>
-            <tr>
-              <th>Title</th>
-              <th>Message</th>
-              <th>Type</th>
-              <th>Status</th>
-              <th>Date</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {notifications.length === 0 ? (
-              <tr>
-                <td colSpan="6">No notifications yet.</td>
-              </tr>
-            ) : (
-              notifications.map((notification) => (
-                <tr key={notification.id}>
-                  <td>{notification.title}</td>
-                  <td>{notification.message}</td>
-                  <td>{notification.type}</td>
-                  <td>
-                    <span
-                      className={
-                        notification.is_read
-                          ? "status-badge status-success"
-                          : "status-badge status-warning"
-                      }
-                    >
-                      {notification.is_read ? "Read" : "Unread"}
-                    </span>
-                  </td>
-                  <td>{formatDate(notification.created_at)}</td>
-                  <td>
-                    {!notification.is_read ? (
-                      <button
-                        className="small-btn"
-                        onClick={() => markNotificationRead(notification.id)}
-                      >
-                        Mark Read
-                      </button>
-                    ) : (
-                      "Done"
-                    )}
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
-    </section>
-  );
-
-  const renderReports = () => (
-    <section className="panel">
-      <h2>My Onboarding Report</h2>
-
-      <div className="stats-grid">
-        <div className="stat-card">
-          <h3>Total Documents</h3>
-          <strong>{dashboard?.summary?.total_documents || 0}</strong>
-        </div>
-
-        <div className="stat-card">
-          <h3>Approved Documents</h3>
-          <strong>{dashboard?.summary?.approved_documents || 0}</strong>
-        </div>
-
-        <div className="stat-card">
-          <h3>Total Tasks</h3>
-          <strong>{dashboard?.summary?.total_tasks || 0}</strong>
-        </div>
-
-        <div className="stat-card">
-          <h3>Completed Tasks</h3>
-          <strong>{dashboard?.summary?.completed_tasks || 0}</strong>
-        </div>
-
-        <div className="stat-card">
-          <h3>Total Trainings</h3>
-          <strong>{dashboard?.summary?.total_trainings || 0}</strong>
-        </div>
-
-        <div className="stat-card">
-          <h3>Overall Progress</h3>
-          <strong>{dashboard?.summary?.overall_progress_percent || 0}%</strong>
-        </div>
-      </div>
-    </section>
-  );
-
-  const renderActiveSection = () => {
-    if (activeSection === "dashboard") return renderDashboard();
-    if (activeSection === "profile") return renderProfile();
-    if (activeSection === "documents") return renderDocuments();
-    if (activeSection === "offers") return renderOffers();
-    if (activeSection === "tasks") return renderTasks();
-    if (activeSection === "trainings") return renderTrainings();
-    if (activeSection === "progress") return renderProgress();
-    if (activeSection === "notifications") return renderNotifications();
-    if (activeSection === "reports") return renderReports();
-
-    return renderDashboard();
+  const renderContent = () => {
+    if (activeTab === "Home") return renderHome();
+    if (activeTab === "Profile") return renderProfile();
+    if (activeTab === "Documents") return renderDocuments();
+    if (activeTab === "Training") return renderTraining();
+    if (activeTab === "Tasks") return renderTasks();
+    if (activeTab === "Alerts") return renderAlerts();
+    return renderHome();
   };
 
   return (
-    <div className="dashboard-page">
-      <nav className="top-nav">
+    <div className="clean-app">
+      <header className="clean-header">
         <div>
-          <h2>OnboardPro</h2>
-          <span>Employee Dashboard</span>
+          <div className="clean-logo-row">
+            <div className="clean-logo">OP</div>
+            <div>
+              <h1>OnboardPro</h1>
+              <p>Employee Mobile Workspace</p>
+            </div>
+          </div>
         </div>
 
-        <div className="nav-user">
-          <span>{user?.name}</span>
-          <button onClick={handleLogout}>Logout</button>
-        </div>
+        <button onClick={logoutUser}>Logout</button>
+      </header>
+
+      <main className="clean-content">{renderContent()}</main>
+
+      <nav className="clean-bottom-nav">
+        <button
+          className={activeTab === "Home" ? "active" : ""}
+          onClick={() => setActiveTab("Home")}
+        >
+          <span>🏠</span>
+          Home
+        </button>
+
+        <button
+          className={activeTab === "Profile" ? "active" : ""}
+          onClick={() => setActiveTab("Profile")}
+        >
+          <span>👤</span>
+          Profile
+        </button>
+
+        <button
+          className={activeTab === "Documents" ? "active" : ""}
+          onClick={() => setActiveTab("Documents")}
+        >
+          <span>📄</span>
+          Docs
+        </button>
+
+        <button
+          className={activeTab === "Alerts" ? "active" : ""}
+          onClick={() => setActiveTab("Alerts")}
+        >
+          <span>🔔</span>
+          Alerts
+        </button>
       </nav>
-
-      <div style={sidebarStyle}>
-        <aside style={sideMenuStyle}>
-          {sidebarItems.map((item) => (
-            <button
-              key={item.key}
-              style={sideButtonStyle(activeSection === item.key)}
-              onClick={() => {
-                setActiveSection(item.key);
-                setMessage("");
-              }}
-            >
-              {item.label}
-            </button>
-          ))}
-        </aside>
-
-        <main style={sectionStyle}>
-          {message && <div className="info-message">{message}</div>}
-          {renderActiveSection()}
-        </main>
-      </div>
     </div>
   );
 }
