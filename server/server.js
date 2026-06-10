@@ -7,7 +7,8 @@ require("dotenv").config();
 // Database connection
 require("./config/db");
 
-const app = express();
+const app = express(); 
+app.set("trust proxy", 1);
 
 /*
   Route imports
@@ -29,8 +30,19 @@ const allowedOrigins = [
   "http://localhost:5173",
   "http://127.0.0.1:5173",
   "http://192.168.31.65:5173",
+  "https://onboardpro-client.onrender.com",
   "https://onboardpro-client-kb88.onrender.com",
 ];
+
+if (process.env.FRONTEND_URLS) {
+  process.env.FRONTEND_URLS.split(",").forEach((url) => {
+    const cleanUrl = url.trim();
+
+    if (cleanUrl && !allowedOrigins.includes(cleanUrl)) {
+      allowedOrigins.push(cleanUrl);
+    }
+  });
+}
 
 /*
   Security middleware
@@ -39,7 +51,6 @@ app.use(helmet());
 
 const corsOptions = {
   origin: function (origin, callback) {
-    // allow Postman, mobile apps, curl, and same-origin requests with no origin
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
