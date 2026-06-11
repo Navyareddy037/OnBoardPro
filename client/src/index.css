@@ -4282,3 +4282,90 @@ code {
     max-width: 650px !important;
   }
 }
+
+/* Employee Progress Graph */
+
+.graph-summary {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 18px;
+}
+
+.graph-circle-card {
+  position: relative;
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+  border-radius: 22px;
+  padding: 14px;
+  min-height: 240px;
+}
+
+.graph-center-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  pointer-events: none;
+}
+
+.graph-center-text h2 {
+  margin: 0;
+  font-size: 36px;
+  font-weight: 900;
+  color: #0f172a;
+}
+
+.graph-center-text p {
+  margin: 4px 0 0;
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.graph-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.graph-details div {
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+  border-radius: 18px;
+  padding: 14px;
+}
+
+.graph-details span {
+  display: block;
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.graph-details strong {
+  color: #2563eb;
+  font-size: 22px;
+  font-weight: 900;
+}
+
+.bar-graph-box {
+  margin-top: 20px;
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+  border-radius: 22px;
+  padding: 16px;
+}
+
+@media (min-width: 900px) {
+  .graph-summary {
+    grid-template-columns: 320px 1fr;
+    align-items: stretch;
+  }
+
+  .graph-details {
+    grid-template-columns: 1fr 1fr;
+  }
+}

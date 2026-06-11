@@ -1,13 +1,71 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+} from "recharts";
 
 function EmployeeDashboard() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [activeTab, setActiveTab] = useState("Home");
 
+  const progressData = {
+    overallProgress: 0,
+    documentsCompleted: 0,
+    documentsTotal: 0,
+    tasksCompleted: 0,
+    tasksTotal: 0,
+    trainingProgress: 0,
+    notifications: 0,
+    offerLetters: 0,
+  };
+
+  const barData = [
+    {
+      name: "Documents",
+      progress:
+        progressData.documentsTotal === 0
+          ? 0
+          : Math.round(
+              (progressData.documentsCompleted / progressData.documentsTotal) *
+                100
+            ),
+    },
+    {
+      name: "Tasks",
+      progress:
+        progressData.tasksTotal === 0
+          ? 0
+          : Math.round(
+              (progressData.tasksCompleted / progressData.tasksTotal) * 100
+            ),
+    },
+    {
+      name: "Training",
+      progress: progressData.trainingProgress,
+    },
+    {
+      name: "Overall",
+      progress: progressData.overallProgress,
+    },
+  ];
+
+  const pieData = [
+    { name: "Completed", value: progressData.overallProgress },
+    { name: "Pending", value: 100 - progressData.overallProgress },
+  ];
+
   useEffect(() => {
     const savedUser = localStorage.getItem("onboardpro_user");
+
     if (savedUser) {
       setUser(JSON.parse(savedUser));
     }
@@ -54,7 +112,7 @@ function EmployeeDashboard() {
       name: "Progress",
       icon: "📊",
       title: "Progress",
-      desc: "Track your onboarding completion",
+      desc: "Track your onboarding completion with graph",
     },
     {
       name: "Notifications",
@@ -69,6 +127,78 @@ function EmployeeDashboard() {
       desc: "View your onboarding reports",
     },
   ];
+
+  const renderProgressGraph = () => {
+    return (
+      <section className="clean-panel">
+        <div className="clean-section-title">
+          <h2>Progress Graph</h2>
+          <p>Your onboarding progress shown visually</p>
+        </div>
+
+        <div className="graph-summary">
+          <div className="graph-circle-card">
+            <ResponsiveContainer width="100%" height={220}>
+              <PieChart>
+                <Pie
+                  data={pieData}
+                  dataKey="value"
+                  innerRadius={65}
+                  outerRadius={90}
+                  paddingAngle={3}
+                >
+                  <Cell fill="#2563eb" />
+                  <Cell fill="#e5e7eb" />
+                </Pie>
+              </PieChart>
+            </ResponsiveContainer>
+
+            <div className="graph-center-text">
+              <h2>{progressData.overallProgress}%</h2>
+              <p>Overall</p>
+            </div>
+          </div>
+
+          <div className="graph-details">
+            <div>
+              <span>Documents</span>
+              <strong>
+                {progressData.documentsCompleted}/{progressData.documentsTotal}
+              </strong>
+            </div>
+
+            <div>
+              <span>Tasks</span>
+              <strong>
+                {progressData.tasksCompleted}/{progressData.tasksTotal}
+              </strong>
+            </div>
+
+            <div>
+              <span>Training</span>
+              <strong>{progressData.trainingProgress}%</strong>
+            </div>
+
+            <div>
+              <span>Overall Progress</span>
+              <strong>{progressData.overallProgress}%</strong>
+            </div>
+          </div>
+        </div>
+
+        <div className="bar-graph-box">
+          <ResponsiveContainer width="100%" height={280}>
+            <BarChart data={barData}>
+              <XAxis dataKey="name" />
+              <YAxis domain={[0, 100]} />
+              <Tooltip />
+              <Bar dataKey="progress" radius={[10, 10, 0, 0]} fill="#2563eb" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </section>
+    );
+  };
 
   const renderHome = () => {
     return (
@@ -87,24 +217,30 @@ function EmployeeDashboard() {
         <section className="clean-stats">
           <div className="clean-stat primary">
             <p>Overall Progress</p>
-            <h2>0%</h2>
+            <h2>{progressData.overallProgress}%</h2>
           </div>
 
           <div className="clean-stat">
             <p>Documents</p>
-            <h2>0/0</h2>
+            <h2>
+              {progressData.documentsCompleted}/{progressData.documentsTotal}
+            </h2>
           </div>
 
           <div className="clean-stat">
             <p>Tasks</p>
-            <h2>0/0</h2>
+            <h2>
+              {progressData.tasksCompleted}/{progressData.tasksTotal}
+            </h2>
           </div>
 
           <div className="clean-stat">
             <p>Training</p>
-            <h2>0%</h2>
+            <h2>{progressData.trainingProgress}%</h2>
           </div>
         </section>
+
+        {renderProgressGraph()}
 
         <section className="clean-section">
           <div className="clean-section-title">
@@ -116,26 +252,15 @@ function EmployeeDashboard() {
             {modules.map((item) => (
               <button key={item.name} onClick={() => setActiveTab(item.name)}>
                 <div className="clean-icon">{item.icon}</div>
+
                 <div>
                   <h3>{item.title}</h3>
                   <p>{item.desc}</p>
                 </div>
+
                 <span>›</span>
               </button>
             ))}
-          </div>
-        </section>
-
-        <section className="clean-progress-card">
-          <div>
-            <h2>My Onboarding Progress</h2>
-            <p>Complete all steps to finish onboarding</p>
-          </div>
-
-          <strong>0%</strong>
-
-          <div className="clean-progress-bar">
-            <div style={{ width: "0%" }}></div>
           </div>
         </section>
       </>
@@ -307,24 +432,7 @@ function EmployeeDashboard() {
   };
 
   const renderProgress = () => {
-    return (
-      <section className="clean-panel">
-        <div className="clean-section-title">
-          <h2>Progress</h2>
-          <p>Your onboarding completion status</p>
-        </div>
-
-        <div className="clean-report">
-          <p>Overall Progress</p>
-          <h1>0%</h1>
-          <span>No onboarding activity completed yet.</span>
-        </div>
-
-        <div className="clean-progress-bar mt-20">
-          <div style={{ width: "0%" }}></div>
-        </div>
-      </section>
-    );
+    return renderProgressGraph();
   };
 
   const renderNotifications = () => {
@@ -363,27 +471,33 @@ function EmployeeDashboard() {
           <p>Your onboarding report summary</p>
         </div>
 
-        <div className="clean-stats">
+        <section className="clean-stats">
           <div className="clean-stat primary">
             <p>Progress</p>
-            <h2>0%</h2>
+            <h2>{progressData.overallProgress}%</h2>
           </div>
 
           <div className="clean-stat">
             <p>Documents</p>
-            <h2>0/0</h2>
+            <h2>
+              {progressData.documentsCompleted}/{progressData.documentsTotal}
+            </h2>
           </div>
 
           <div className="clean-stat">
             <p>Tasks</p>
-            <h2>0/0</h2>
+            <h2>
+              {progressData.tasksCompleted}/{progressData.tasksTotal}
+            </h2>
           </div>
 
           <div className="clean-stat">
             <p>Training</p>
-            <h2>0%</h2>
+            <h2>{progressData.trainingProgress}%</h2>
           </div>
-        </div>
+        </section>
+
+        {renderProgressGraph()}
       </section>
     );
   };
@@ -407,6 +521,7 @@ function EmployeeDashboard() {
       <header className="clean-header">
         <div className="clean-logo-row">
           <div className="clean-logo">OP</div>
+
           <div>
             <h1>OnboardPro</h1>
             <p>Employee Mobile Workspace</p>
@@ -436,11 +551,11 @@ function EmployeeDashboard() {
         </button>
 
         <button
-          className={activeTab === "Documents" ? "active" : ""}
-          onClick={() => setActiveTab("Documents")}
+          className={activeTab === "Progress" ? "active" : ""}
+          onClick={() => setActiveTab("Progress")}
         >
-          <span>📄</span>
-          Docs
+          <span>📊</span>
+          Progress
         </button>
 
         <button
