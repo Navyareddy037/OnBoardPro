@@ -19,6 +19,57 @@ function EmployeeDashboard() {
     navigate("/login");
   };
 
+  const modules = [
+    {
+      name: "Profile",
+      icon: "👤",
+      title: "Profile Management",
+      desc: "View and manage your employee profile",
+    },
+    {
+      name: "Documents",
+      icon: "📄",
+      title: "Documents",
+      desc: "Upload and track required documents",
+    },
+    {
+      name: "Offer Letters",
+      icon: "📩",
+      title: "Offer Letters",
+      desc: "View your offer letters and HR letters",
+    },
+    {
+      name: "Tasks",
+      icon: "✅",
+      title: "Tasks",
+      desc: "View assigned onboarding tasks",
+    },
+    {
+      name: "Trainings",
+      icon: "🎓",
+      title: "Trainings",
+      desc: "Complete assigned training modules",
+    },
+    {
+      name: "Progress",
+      icon: "📊",
+      title: "Progress",
+      desc: "Track your onboarding completion",
+    },
+    {
+      name: "Notifications",
+      icon: "🔔",
+      title: "Notifications",
+      desc: "View latest onboarding updates",
+    },
+    {
+      name: "Reports",
+      icon: "📈",
+      title: "Reports",
+      desc: "View your onboarding reports",
+    },
+  ];
+
   const renderHome = () => {
     return (
       <>
@@ -26,13 +77,16 @@ function EmployeeDashboard() {
           <div>
             <span>EMPLOYEE PORTAL</span>
             <h1>Hello, {user?.name || "Employee"}</h1>
-            <p>Complete your onboarding steps and track your status easily.</p>
+            <p>
+              Complete your onboarding steps, upload documents, finish training,
+              and track your progress.
+            </p>
           </div>
         </section>
 
         <section className="clean-stats">
           <div className="clean-stat primary">
-            <p>My Progress</p>
+            <p>Overall Progress</p>
             <h2>0%</h2>
           </div>
 
@@ -54,52 +108,27 @@ function EmployeeDashboard() {
 
         <section className="clean-section">
           <div className="clean-section-title">
-            <h2>My Actions</h2>
-            <p>Complete these onboarding steps</p>
+            <h2>Employee Features</h2>
+            <p>All onboarding features in one place</p>
           </div>
 
           <div className="clean-modules">
-            <button onClick={() => setActiveTab("Profile")}>
-              <div className="clean-icon">👤</div>
-              <div>
-                <h3>Profile</h3>
-                <p>View your employee details</p>
-              </div>
-              <span>›</span>
-            </button>
-
-            <button onClick={() => setActiveTab("Documents")}>
-              <div className="clean-icon">📄</div>
-              <div>
-                <h3>Documents</h3>
-                <p>Upload required documents</p>
-              </div>
-              <span>›</span>
-            </button>
-
-            <button onClick={() => setActiveTab("Training")}>
-              <div className="clean-icon">🎓</div>
-              <div>
-                <h3>Training</h3>
-                <p>Complete assigned modules</p>
-              </div>
-              <span>›</span>
-            </button>
-
-            <button onClick={() => setActiveTab("Tasks")}>
-              <div className="clean-icon">✅</div>
-              <div>
-                <h3>Tasks</h3>
-                <p>Check your task list</p>
-              </div>
-              <span>›</span>
-            </button>
+            {modules.map((item) => (
+              <button key={item.name} onClick={() => setActiveTab(item.name)}>
+                <div className="clean-icon">{item.icon}</div>
+                <div>
+                  <h3>{item.title}</h3>
+                  <p>{item.desc}</p>
+                </div>
+                <span>›</span>
+              </button>
+            ))}
           </div>
         </section>
 
         <section className="clean-progress-card">
           <div>
-            <h2>My Onboarding</h2>
+            <h2>My Onboarding Progress</h2>
             <p>Complete all steps to finish onboarding</p>
           </div>
 
@@ -127,6 +156,16 @@ function EmployeeDashboard() {
 
         <div className="clean-list">
           <div>
+            <span>Employee Name</span>
+            <strong>{user?.name || "Employee"}</strong>
+          </div>
+
+          <div>
+            <span>Email</span>
+            <strong>{user?.email || "employee@example.com"}</strong>
+          </div>
+
+          <div>
             <span>Role</span>
             <strong>{user?.role || "Employee"}</strong>
           </div>
@@ -134,11 +173,6 @@ function EmployeeDashboard() {
           <div>
             <span>Status</span>
             <strong>Active</strong>
-          </div>
-
-          <div>
-            <span>Profile</span>
-            <strong>Pending</strong>
           </div>
         </div>
       </section>
@@ -150,7 +184,7 @@ function EmployeeDashboard() {
       <section className="clean-panel">
         <div className="clean-section-title">
           <h2>Documents</h2>
-          <p>Upload your required documents</p>
+          <p>Upload your required onboarding documents</p>
         </div>
 
         <div className="clean-form">
@@ -167,15 +201,88 @@ function EmployeeDashboard() {
 
           <button>Upload Document</button>
         </div>
+
+        <div className="clean-list mt-20">
+          <div>
+            <span>📄 ID Proof</span>
+            <strong>Pending</strong>
+          </div>
+
+          <div>
+            <span>📄 Resume</span>
+            <strong>Pending</strong>
+          </div>
+
+          <div>
+            <span>🏦 Bank Details</span>
+            <strong>Pending</strong>
+          </div>
+        </div>
       </section>
     );
   };
 
-  const renderTraining = () => {
+  const renderOfferLetters = () => {
     return (
       <section className="clean-panel">
         <div className="clean-section-title">
-          <h2>Training</h2>
+          <h2>Offer Letters</h2>
+          <p>View HR generated offer letters and joining letters</p>
+        </div>
+
+        <div className="clean-list">
+          <div>
+            <span>📩 Offer Letter</span>
+            <strong>Not Available</strong>
+          </div>
+
+          <div>
+            <span>📩 Joining Letter</span>
+            <strong>Not Available</strong>
+          </div>
+        </div>
+      </section>
+    );
+  };
+
+  const renderTasks = () => {
+    return (
+      <section className="clean-panel">
+        <div className="clean-section-title">
+          <h2>Tasks</h2>
+          <p>Your assigned onboarding tasks</p>
+        </div>
+
+        <div className="clean-list">
+          <div>
+            <span>Complete Profile</span>
+            <strong>Pending</strong>
+          </div>
+
+          <div>
+            <span>Upload Documents</span>
+            <strong>Pending</strong>
+          </div>
+
+          <div>
+            <span>Complete HR Orientation</span>
+            <strong>Pending</strong>
+          </div>
+
+          <div>
+            <span>Read Company Policy</span>
+            <strong>Pending</strong>
+          </div>
+        </div>
+      </section>
+    );
+  };
+
+  const renderTrainings = () => {
+    return (
+      <section className="clean-panel">
+        <div className="clean-section-title">
+          <h2>Trainings</h2>
           <p>Complete assigned training modules</p>
         </div>
 
@@ -199,35 +306,28 @@ function EmployeeDashboard() {
     );
   };
 
-  const renderTasks = () => {
+  const renderProgress = () => {
     return (
       <section className="clean-panel">
         <div className="clean-section-title">
-          <h2>Tasks</h2>
-          <p>Your onboarding task list</p>
+          <h2>Progress</h2>
+          <p>Your onboarding completion status</p>
         </div>
 
-        <div className="clean-list">
-          <div>
-            <span>Complete Profile</span>
-            <strong>Pending</strong>
-          </div>
+        <div className="clean-report">
+          <p>Overall Progress</p>
+          <h1>0%</h1>
+          <span>No onboarding activity completed yet.</span>
+        </div>
 
-          <div>
-            <span>Upload Documents</span>
-            <strong>Pending</strong>
-          </div>
-
-          <div>
-            <span>Complete Orientation</span>
-            <strong>Pending</strong>
-          </div>
+        <div className="clean-progress-bar mt-20">
+          <div style={{ width: "0%" }}></div>
         </div>
       </section>
     );
   };
 
-  const renderAlerts = () => {
+  const renderNotifications = () => {
     return (
       <section className="clean-panel">
         <div className="clean-section-title">
@@ -245,6 +345,44 @@ function EmployeeDashboard() {
             <span>Please upload your documents</span>
             <strong>Pending</strong>
           </div>
+
+          <div>
+            <span>Complete your HR orientation</span>
+            <strong>Pending</strong>
+          </div>
+        </div>
+      </section>
+    );
+  };
+
+  const renderReports = () => {
+    return (
+      <section className="clean-panel">
+        <div className="clean-section-title">
+          <h2>Reports</h2>
+          <p>Your onboarding report summary</p>
+        </div>
+
+        <div className="clean-stats">
+          <div className="clean-stat primary">
+            <p>Progress</p>
+            <h2>0%</h2>
+          </div>
+
+          <div className="clean-stat">
+            <p>Documents</p>
+            <h2>0/0</h2>
+          </div>
+
+          <div className="clean-stat">
+            <p>Tasks</p>
+            <h2>0/0</h2>
+          </div>
+
+          <div className="clean-stat">
+            <p>Training</p>
+            <h2>0%</h2>
+          </div>
         </div>
       </section>
     );
@@ -254,22 +392,24 @@ function EmployeeDashboard() {
     if (activeTab === "Home") return renderHome();
     if (activeTab === "Profile") return renderProfile();
     if (activeTab === "Documents") return renderDocuments();
-    if (activeTab === "Training") return renderTraining();
+    if (activeTab === "Offer Letters") return renderOfferLetters();
     if (activeTab === "Tasks") return renderTasks();
-    if (activeTab === "Alerts") return renderAlerts();
+    if (activeTab === "Trainings") return renderTrainings();
+    if (activeTab === "Progress") return renderProgress();
+    if (activeTab === "Notifications") return renderNotifications();
+    if (activeTab === "Reports") return renderReports();
+
     return renderHome();
   };
 
   return (
     <div className="clean-app">
       <header className="clean-header">
-        <div>
-          <div className="clean-logo-row">
-            <div className="clean-logo">OP</div>
-            <div>
-              <h1>OnboardPro</h1>
-              <p>Employee Mobile Workspace</p>
-            </div>
+        <div className="clean-logo-row">
+          <div className="clean-logo">OP</div>
+          <div>
+            <h1>OnboardPro</h1>
+            <p>Employee Mobile Workspace</p>
           </div>
         </div>
 
@@ -304,8 +444,8 @@ function EmployeeDashboard() {
         </button>
 
         <button
-          className={activeTab === "Alerts" ? "active" : ""}
-          onClick={() => setActiveTab("Alerts")}
+          className={activeTab === "Notifications" ? "active" : ""}
+          onClick={() => setActiveTab("Notifications")}
         >
           <span>🔔</span>
           Alerts

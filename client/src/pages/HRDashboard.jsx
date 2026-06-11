@@ -19,6 +19,63 @@ function HRDashboard() {
     navigate("/login");
   };
 
+  const modules = [
+    {
+      name: "Employees",
+      icon: "👥",
+      title: "Employee Management",
+      desc: "Add, view and manage employee onboarding",
+    },
+    {
+      name: "Documents",
+      icon: "📄",
+      title: "Document Verification",
+      desc: "Review and approve employee documents",
+    },
+    {
+      name: "Offer Letters",
+      icon: "📩",
+      title: "Offer Letters",
+      desc: "Manage employee offer and joining letters",
+    },
+    {
+      name: "Tasks",
+      icon: "✅",
+      title: "Task Management",
+      desc: "Assign and track onboarding tasks",
+    },
+    {
+      name: "Trainings",
+      icon: "🎓",
+      title: "Training Management",
+      desc: "Create and assign training modules",
+    },
+    {
+      name: "Departments",
+      icon: "🏢",
+      title: "Departments",
+      desc: "Manage employee departments",
+    },
+    {
+      name: "Progress",
+      icon: "📊",
+      title: "Progress Tracking",
+      desc: "Track employee onboarding completion",
+    },
+    {
+      name: "Notifications",
+      icon: "🔔",
+      title: "Notifications",
+      desc: "Send onboarding alerts and reminders",
+    },
+    {
+      name: "Reports",
+      icon: "📈",
+      title: "Reports",
+      desc: "View onboarding analytics and reports",
+    },
+  ];
+
   const renderHome = () => {
     return (
       <>
@@ -26,7 +83,10 @@ function HRDashboard() {
           <div>
             <span>HR PORTAL</span>
             <h1>Hello, {user?.name || "HR Admin"}</h1>
-            <p>Manage employee onboarding with a simple professional workspace.</p>
+            <p>
+              Manage employees, documents, offer letters, tasks, trainings,
+              departments, notifications, and reports from one dashboard.
+            </p>
           </div>
         </section>
 
@@ -54,53 +114,28 @@ function HRDashboard() {
 
         <section className="clean-section">
           <div className="clean-section-title">
-            <h2>HR Actions</h2>
-            <p>Important onboarding operations</p>
+            <h2>HR Features</h2>
+            <p>All onboarding controls in one place</p>
           </div>
 
           <div className="clean-modules">
-            <button onClick={() => setActiveTab("Employees")}>
-              <div className="clean-icon">👥</div>
-              <div>
-                <h3>Employees</h3>
-                <p>Add and manage employees</p>
-              </div>
-              <span>›</span>
-            </button>
-
-            <button onClick={() => setActiveTab("Documents")}>
-              <div className="clean-icon">📄</div>
-              <div>
-                <h3>Documents</h3>
-                <p>Verify submitted documents</p>
-              </div>
-              <span>›</span>
-            </button>
-
-            <button onClick={() => setActiveTab("Training")}>
-              <div className="clean-icon">🎓</div>
-              <div>
-                <h3>Training</h3>
-                <p>Assign onboarding modules</p>
-              </div>
-              <span>›</span>
-            </button>
-
-            <button onClick={() => setActiveTab("Reports")}>
-              <div className="clean-icon">📊</div>
-              <div>
-                <h3>Reports</h3>
-                <p>View onboarding analytics</p>
-              </div>
-              <span>›</span>
-            </button>
+            {modules.map((item) => (
+              <button key={item.name} onClick={() => setActiveTab(item.name)}>
+                <div className="clean-icon">{item.icon}</div>
+                <div>
+                  <h3>{item.title}</h3>
+                  <p>{item.desc}</p>
+                </div>
+                <span>›</span>
+              </button>
+            ))}
           </div>
         </section>
 
         <section className="clean-progress-card">
           <div>
-            <h2>Overall Progress</h2>
-            <p>Current onboarding completion rate</p>
+            <h2>Overall Onboarding Progress</h2>
+            <p>Track complete onboarding status of all employees</p>
           </div>
 
           <strong>0%</strong>
@@ -117,12 +152,12 @@ function HRDashboard() {
     return (
       <section className="clean-panel">
         <div className="clean-section-title">
-          <h2>Employee Registration</h2>
-          <p>Add new employee details</p>
+          <h2>Employee Management</h2>
+          <p>Add and manage employee onboarding profiles</p>
         </div>
 
         <div className="clean-form">
-          <label>Full Name</label>
+          <label>Employee Name</label>
           <input placeholder="Enter employee name" />
 
           <label>Email Address</label>
@@ -136,6 +171,13 @@ function HRDashboard() {
 
           <button>Add Employee</button>
         </div>
+
+        <div className="clean-list mt-20">
+          <div>
+            <span>👤 No employees added yet</span>
+            <strong>Empty</strong>
+          </div>
+        </div>
       </section>
     );
   };
@@ -144,8 +186,8 @@ function HRDashboard() {
     return (
       <section className="clean-panel">
         <div className="clean-section-title">
-          <h2>Documents</h2>
-          <p>Review employee documents</p>
+          <h2>Document Verification</h2>
+          <p>Review, approve, or reject employee documents</p>
         </div>
 
         <div className="clean-list">
@@ -173,28 +215,31 @@ function HRDashboard() {
     );
   };
 
-  const renderTraining = () => {
+  const renderOfferLetters = () => {
     return (
       <section className="clean-panel">
         <div className="clean-section-title">
-          <h2>Training</h2>
-          <p>Manage employee training modules</p>
+          <h2>Offer Letters</h2>
+          <p>Create and manage employee offer letters</p>
         </div>
 
-        <div className="clean-list">
-          <div>
-            <span>🎓 HR Orientation</span>
-            <strong>Assigned</strong>
-          </div>
+        <div className="clean-form">
+          <label>Employee Name</label>
+          <input placeholder="Enter employee name" />
 
-          <div>
-            <span>🔐 Security Awareness</span>
-            <strong>Pending</strong>
-          </div>
+          <label>Position</label>
+          <input placeholder="Enter position" />
 
+          <label>Joining Date</label>
+          <input type="date" />
+
+          <button>Create Offer Letter</button>
+        </div>
+
+        <div className="clean-list mt-20">
           <div>
-            <span>🏢 Company Policies</span>
-            <strong>Pending</strong>
+            <span>📩 No offer letters created yet</span>
+            <strong>Empty</strong>
           </div>
         </div>
       </section>
@@ -205,11 +250,24 @@ function HRDashboard() {
     return (
       <section className="clean-panel">
         <div className="clean-section-title">
-          <h2>Tasks</h2>
-          <p>Track onboarding tasks</p>
+          <h2>Task Management</h2>
+          <p>Create and assign onboarding tasks</p>
         </div>
 
-        <div className="clean-list">
+        <div className="clean-form">
+          <label>Task Title</label>
+          <input placeholder="Enter task title" />
+
+          <label>Assigned To</label>
+          <input placeholder="Enter employee email" />
+
+          <label>Due Date</label>
+          <input type="date" />
+
+          <button>Assign Task</button>
+        </div>
+
+        <div className="clean-list mt-20">
           <div>
             <span>Complete Profile</span>
             <strong>Pending</strong>
@@ -229,18 +287,190 @@ function HRDashboard() {
     );
   };
 
+  const renderTrainings = () => {
+    return (
+      <section className="clean-panel">
+        <div className="clean-section-title">
+          <h2>Training Management</h2>
+          <p>Create and assign employee training modules</p>
+        </div>
+
+        <div className="clean-form">
+          <label>Training Title</label>
+          <input placeholder="Enter training title" />
+
+          <label>Description</label>
+          <input placeholder="Enter short description" />
+
+          <label>Assigned To</label>
+          <input placeholder="Enter employee email" />
+
+          <button>Assign Training</button>
+        </div>
+
+        <div className="clean-list mt-20">
+          <div>
+            <span>🎓 HR Orientation</span>
+            <strong>Assigned</strong>
+          </div>
+
+          <div>
+            <span>🔐 Security Awareness</span>
+            <strong>Pending</strong>
+          </div>
+
+          <div>
+            <span>🏢 Company Policies</span>
+            <strong>Pending</strong>
+          </div>
+        </div>
+      </section>
+    );
+  };
+
+  const renderDepartments = () => {
+    return (
+      <section className="clean-panel">
+        <div className="clean-section-title">
+          <h2>Departments</h2>
+          <p>Manage company departments and employee allocation</p>
+        </div>
+
+        <div className="clean-form">
+          <label>Department Name</label>
+          <input placeholder="Enter department name" />
+
+          <label>Manager Name</label>
+          <input placeholder="Enter manager name" />
+
+          <button>Add Department</button>
+        </div>
+
+        <div className="clean-list mt-20">
+          <div>
+            <span>Human Resources</span>
+            <strong>Active</strong>
+          </div>
+
+          <div>
+            <span>Engineering</span>
+            <strong>Active</strong>
+          </div>
+
+          <div>
+            <span>Finance</span>
+            <strong>Active</strong>
+          </div>
+        </div>
+      </section>
+    );
+  };
+
+  const renderProgress = () => {
+    return (
+      <section className="clean-panel">
+        <div className="clean-section-title">
+          <h2>Progress Tracking</h2>
+          <p>Track complete onboarding progress</p>
+        </div>
+
+        <div className="clean-report">
+          <p>Overall Completion</p>
+          <h1>0%</h1>
+          <span>No onboarding activity completed yet.</span>
+        </div>
+
+        <div className="clean-progress-bar mt-20">
+          <div style={{ width: "0%" }}></div>
+        </div>
+
+        <div className="clean-list mt-20">
+          <div>
+            <span>Documents Approved</span>
+            <strong>0/0</strong>
+          </div>
+
+          <div>
+            <span>Tasks Completed</span>
+            <strong>0/0</strong>
+          </div>
+
+          <div>
+            <span>Training Completed</span>
+            <strong>0%</strong>
+          </div>
+        </div>
+      </section>
+    );
+  };
+
+  const renderNotifications = () => {
+    return (
+      <section className="clean-panel">
+        <div className="clean-section-title">
+          <h2>Notifications</h2>
+          <p>Send onboarding alerts and reminders</p>
+        </div>
+
+        <div className="clean-form">
+          <label>Notification Title</label>
+          <input placeholder="Enter notification title" />
+
+          <label>Message</label>
+          <input placeholder="Enter notification message" />
+
+          <button>Send Notification</button>
+        </div>
+
+        <div className="clean-list mt-20">
+          <div>
+            <span>Welcome notification</span>
+            <strong>Ready</strong>
+          </div>
+
+          <div>
+            <span>Document reminder</span>
+            <strong>Pending</strong>
+          </div>
+        </div>
+      </section>
+    );
+  };
+
   const renderReports = () => {
     return (
       <section className="clean-panel">
         <div className="clean-section-title">
           <h2>Reports</h2>
-          <p>Onboarding performance overview</p>
+          <p>Onboarding analytics and HR reports</p>
         </div>
 
-        <div className="clean-report">
+        <div className="clean-stats">
+          <div className="clean-stat primary">
+            <p>Total Employees</p>
+            <h2>0</h2>
+          </div>
+
+          <div className="clean-stat">
+            <p>Documents</p>
+            <h2>0/0</h2>
+          </div>
+
+          <div className="clean-stat">
+            <p>Tasks</p>
+            <h2>0/0</h2>
+          </div>
+
+          <div className="clean-stat">
+            <p>Training</p>
+            <h2>0%</h2>
+          </div>
+        </div>
+
+        <div className="clean-report mt-20">
           <p>Completion Rate</p>
           <h1>0%</h1>
-          <span>No onboarding activity completed yet.</span>
+          <span>Overall onboarding performance report</span>
         </div>
       </section>
     );
@@ -250,22 +480,25 @@ function HRDashboard() {
     if (activeTab === "Home") return renderHome();
     if (activeTab === "Employees") return renderEmployees();
     if (activeTab === "Documents") return renderDocuments();
-    if (activeTab === "Training") return renderTraining();
+    if (activeTab === "Offer Letters") return renderOfferLetters();
     if (activeTab === "Tasks") return renderTasks();
+    if (activeTab === "Trainings") return renderTrainings();
+    if (activeTab === "Departments") return renderDepartments();
+    if (activeTab === "Progress") return renderProgress();
+    if (activeTab === "Notifications") return renderNotifications();
     if (activeTab === "Reports") return renderReports();
+
     return renderHome();
   };
 
   return (
     <div className="clean-app">
       <header className="clean-header">
-        <div>
-          <div className="clean-logo-row">
-            <div className="clean-logo">OP</div>
-            <div>
-              <h1>OnboardPro</h1>
-              <p>HR Mobile Workspace</p>
-            </div>
+        <div className="clean-logo-row">
+          <div className="clean-logo">OP</div>
+          <div>
+            <h1>OnboardPro</h1>
+            <p>HR Mobile Workspace</p>
           </div>
         </div>
 
