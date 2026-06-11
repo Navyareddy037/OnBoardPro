@@ -4104,17 +4104,181 @@ code {
   color: #2563eb;
 }
 
-/* Desktop preview safety */
-@media (min-width: 800px) {
+
+
+/* ==================================================
+   WEB DASHBOARD LAYOUT FOR LAPTOP / DESKTOP
+   Mobile app keeps mobile layout
+   ================================================== */
+
+@media (min-width: 900px) {
   .clean-app {
-    max-width: 430px;
-    margin: 0 auto;
-    box-shadow: 0 0 45px rgba(15, 23, 42, 0.12);
+    min-height: 100vh !important;
+    max-width: none !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding-bottom: 0 !important;
+    background: #f4f7fb !important;
+    display: grid !important;
+    grid-template-columns: 280px 1fr !important;
+    box-shadow: none !important;
+  }
+
+  .clean-header {
+    position: fixed !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 280px !important;
+    height: 100vh !important;
+    background: #0f172a !important;
+    color: white !important;
+    border-right: 1px solid #1e293b !important;
+    border-bottom: none !important;
+    padding: 30px 22px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    align-items: stretch !important;
+  }
+
+  .clean-logo-row {
+    display: block !important;
+  }
+
+  .clean-logo {
+    width: 64px !important;
+    height: 64px !important;
+    border-radius: 20px !important;
+    margin-bottom: 16px !important;
+  }
+
+  .clean-header h1 {
+    color: white !important;
+    font-size: 28px !important;
+  }
+
+  .clean-header p {
+    color: #cbd5e1 !important;
+    font-size: 14px !important;
+  }
+
+  .clean-header button {
+    width: 100% !important;
+    border-radius: 14px !important;
+    padding: 14px !important;
+    font-size: 15px !important;
+  }
+
+  .clean-content {
+    grid-column: 2 !important;
+    padding: 36px !important;
+    max-width: 1200px !important;
+    width: 100% !important;
+    margin: 0 auto !important;
+  }
+
+  .clean-welcome {
+    border-radius: 28px !important;
+    padding: 36px !important;
+    margin-bottom: 26px !important;
+  }
+
+  .clean-welcome h1 {
+    font-size: 38px !important;
+  }
+
+  .clean-welcome p {
+    max-width: 650px !important;
+    font-size: 16px !important;
+  }
+
+  .clean-stats {
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 20px !important;
+    margin-bottom: 26px !important;
+  }
+
+  .clean-stat {
+    min-height: 150px !important;
+    padding: 24px !important;
+    border-radius: 22px !important;
+  }
+
+  .clean-stat h2 {
+    font-size: 40px !important;
+  }
+
+  .clean-section,
+  .clean-panel,
+  .clean-progress-card {
+    border-radius: 24px !important;
+    padding: 26px !important;
+  }
+
+  .clean-section-title h2 {
+    font-size: 26px !important;
+  }
+
+  .clean-modules {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 18px !important;
+  }
+
+  .clean-modules button {
+    min-height: 110px !important;
+    padding: 20px !important;
   }
 
   .clean-bottom-nav {
-    max-width: 400px;
-    left: 50%;
-    transform: translateX(-50%);
+    position: fixed !important;
+    left: 22px !important;
+    right: auto !important;
+    bottom: auto !important;
+    top: 190px !important;
+    width: 236px !important;
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+    transform: none !important;
+    max-width: none !important;
+    z-index: 200 !important;
+  }
+
+  .clean-bottom-nav button {
+    width: 100% !important;
+    background: transparent !important;
+    color: #cbd5e1 !important;
+    border-radius: 14px !important;
+    padding: 14px 16px !important;
+    text-align: left !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    font-size: 15px !important;
+  }
+
+  .clean-bottom-nav button span {
+    display: inline-block !important;
+    font-size: 20px !important;
+    margin: 0 !important;
+  }
+
+  .clean-bottom-nav button.active {
+    background: #2563eb !important;
+    color: white !important;
+  }
+
+  .clean-list div {
+    padding: 18px !important;
+  }
+
+  .clean-form {
+    max-width: 650px !important;
   }
 }
