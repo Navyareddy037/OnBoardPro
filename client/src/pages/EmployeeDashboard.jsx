@@ -30,16 +30,6 @@ function EmployeeDashboard() {
 
   const barData = [
     {
-      name: "Documents",
-      progress:
-        progressData.documentsTotal === 0
-          ? 0
-          : Math.round(
-              (progressData.documentsCompleted / progressData.documentsTotal) *
-                100
-            ),
-    },
-    {
       name: "Tasks",
       progress:
         progressData.tasksTotal === 0
@@ -160,13 +150,6 @@ function EmployeeDashboard() {
           </div>
 
           <div className="graph-details">
-            <div>
-              <span>Documents</span>
-              <strong>
-                {progressData.documentsCompleted}/{progressData.documentsTotal}
-              </strong>
-            </div>
-
             <div>
               <span>Tasks</span>
               <strong>
